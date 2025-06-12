@@ -1,46 +1,27 @@
-# How to self-host Matrix and Element docker compose
+# What is this guide about
 
-    Based on https://cyberhost.uk/element-matrix-setup/#installmatrixandelement - I extend with nginx section.
+In this guide I'll describe how to create fully self hosted decentralized e2ee communication system.
 
-This is a complete guide on setting up Matrix (Synapse) and Element on a fresh linux server using docker.
+I'll use matrix and xmpp as an examples, but it's ok to use anything, that you can wrap into docker container.
 
-## What is Matrix?
+This guide is about step-by-step improvements. Feel free to skip or ignore something that you don't need right now.
 
-Matrix is an open standard and communication protocol for real-time communication. It aims to make real-time communication work seamlessly between different service providers, just like standard Simple Mail Transfer Protocol email does now for store-and-forward email service, by allowing users with accounts at one communications service provider to communicate with users of a different service provider via online chat, voice over IP, and video-telephony. Such protocols have been around before such as XMPP but Matrix is not based on that or another communication protocol. From a technical perspective, it is an application layer communication protocol for federated real-time communication. It provides HTTP APIs and open source reference implementations for securely distributing and persisting messages in JSON format over an open federation of servers. It can integrate with standard web services via WebRTC, facilitating browser-to-browser applications. Wikipedia
+# What do I need to know to start
 
-    If you do know how to bind fqdn to docker compose - do it. If you don't - use ip
-    In this guide use the following substitution:
-    - $USERNAME: snowinmars
-    - ###
-    - # dns
-    - $NGX_DOMAIN:              10.10.10.100 or example.org
-    - $POSTGRES_DOMAIN:         10.10.10.2   or postgres.example.org
-    - $SYNAPSE_DOMAIN:          10.10.10.3   or synapse.example.org
-    - $SYNAPSE_PORT:            8080
-    - $ELEMENTS_DOMAIN:         10.10.10.4   or elements.example.org
-    - $ELEMENTS_PORT:           80
-    - $MAUTRIX_TELEGRAM_DOMAIN: 10.10.10.11   or mautrix-telegram.example.org
-    - $MAUTRIX_DISCORD_DOMAIN: 10.10.10.12   or mautrix-discord.example.org
-    - ###
-    - # postgres settings
-    - $POSTGRES_DB:          synapse
-    - $POSTGRES_USER:        synapse
-    - $POSTGRES_PASSWORD:    kljfdgkjbflkbjnlkdjfhg
-    - $POSTGRES_INITDB_ARGS: --encoding=UTF-8 --lc-collate=C --lc-ctype=C
-    - ###
-    - # mautrix telegram settings
-    - $BOT_USERNAME: telegrambot
-    - $TELEGRAM_API_ID:   11111           # from https://my.telegram.org/apps
-    - $TELEGRAM_API_HASH: 22222           # from https://my.telegram.org/apps
-    - $TELEGRAM_BOT_ACCESS_KEY: 3333:aaaa # from @BotFather
+Be not afraid.
 
-Every variables between files should match each other. It's good idea to add `.env` file and setup templating, but I will skip it in this guide for now. Replace it manually.
+Linux - a bit. Docker - a bit. All the other stuff you'll learn in the way.
 
-    Friendly advice: almost all containers will restrict you to read or write to it's config files. So run your IDE using sudo.
+# How to read this guide
 
-## Domain setup
+1. [INIT.md](1.INIT.md) - initial setup. The only really required step
+1. [MATRIX.md](2.MATRIX.md) - create element+synapse servers
+  1. [BRIDGES.md](2.1.BRIDGES.md) - create matrix bridges
+1. [XMPP.md](3.XMPP.md) - create xmpp server
+1. [PARTITIONS.md](4.PARTITIONS.md) - move servers into encrypted partition
+1. [NETWORK.md](5.NETWORK.md) - move servers into private network
 
-    If you run the system locally, skip this step.
+# Next
 
 1. Register domain `$NGX_DOMAIN`
 2. Create a virtual machine with public ip
@@ -350,8 +331,7 @@ RUN mkdir -p /etc/letsencrypt
 RUN mkdir -p /var/www/certbot
 RUN rm /etc/nginx/conf.d/*
 
-EXPOSE 80
-EXPOSE 443
+EXPOSE 80 443
 
 CMD [ "nginx", "-g", "daemon off;" ]
 ```
@@ -619,7 +599,12 @@ Pull the new docker images and then restart the containers:
 
 `docker compose pull && docker compose up -d`
 
+Feel free to share on modify this guide under GNU/GPL.
+
+
 ## See also
 
-- [Database backups](DatabaseBackups.md)
-- [Bridges](Bridges.md)
+1. https://habr.com/ru/post/665766/
+1. https://docs.mau.fi/bridges/python/setup.html
+1. https://ssine.ink/en/posts/matrix-bot-and-bridges/
+1. https://docs.mau.fi/bridges/general/registering-appservices.html
